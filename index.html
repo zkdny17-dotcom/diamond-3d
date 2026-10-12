@@ -2,321 +2,450 @@
 <html lang="kk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Углеродтың 3D кристалдық торлары</title>
-    <script src="https://cloudflare.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Көміртектің 3D кристалдық торлары</title>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #000000;
-            color: #ffffff;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-        header {
-            background-color: #000000;
-            padding: 30px 15px 15px 15px;
-            text-align: center;
-        }
-        h1 {
-            color: #ffffff;
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 15px;
-        }
-        .nav-menu {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            min-height: 100vh;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Заголовок */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            letter-spacing: 0.05em;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        /* Главное меню (кнопки) */
+        .menu {
+            display: flex;
+            gap: 15px;
             justify-content: center;
-            gap: 12px;
-            margin-bottom: 10px;
         }
-        .nav-btn {
-            background-color: transparent;
-            color: #666666;
-            border: 1px solid #222222;
-            padding: 10px 24px;
-            font-size: 13px;
+
+        .menu-btn {
+            background-color: #111827;
+            color: #9ca3af;
+            border: 2px solid #1f2937;
+            padding: 10px 35px;
+            font-size: 1rem;
             font-weight: 600;
-            letter-spacing: 1px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             text-transform: uppercase;
-            border-radius: 4px;
+            letter-spacing: 0.05em;
         }
-        .nav-btn.active {
-            background-color: #0052ff;
+
+        .menu-btn:hover {
+            border-color: #3b82f6;
             color: #ffffff;
-            border-color: #0052ff;
         }
-        header p {
-            color: #444444;
-            font-size: 11px;
-            margin-top: 10px;
+
+        .menu-btn.active {
+            background-color: #2563eb;
+            border-color: #2563eb;
+            color: white;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
         }
-        #container3d {
+
+        /* Центральное 3D окно */
+        .viewer-container {
             width: 100%;
-            height: 45vh;
-            min-height: 320px;
-            position: relative;
+            max-width: 1000px;
+            height: 500px;
             background-color: #000000;
-            border-top: 1px solid #111111;
-            border-bottom: 1px solid #111111;
-            cursor: grab;
-            touch-action: none;
-        }
-        #container3d:active {
-            cursor: grabbing;
-        }
-        .info-section {
-            max-width: 650px;
-            margin: 0 auto;
-            padding: 25px 20px 50px 20px;
-        }
-        .content-block {
-            display: none;
-        }
-        .content-block.active {
-            display: block;
-        }
-        h2 {
-            color: #0052ff;
-            margin-top: 25px;
-            margin-bottom: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-        p {
-            margin-bottom: 15px;
-            color: #a0a0a0;
-            font-size: 14px;
-            text-align: justify;
-        }
-        ul {
-            list-style: none;
-            margin-bottom: 15px;
-        }
-        li {
-            margin-bottom: 10px;
-            color: #a0a0a0;
-            font-size: 14px;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            margin: 20px 0;
             position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            touch-action: none; /* Важно для мобильных устройств (чтобы скролл не мешал вращению 3D) */
+        }
+
+        .viewer-hint {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(17, 24, 39, 0.7);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+        }
+
+        /* Информационный блок снизу */
+        .info-container {
+            width: 100%;
+            max-width: 1000px;
+            background: #0b0f19;
+            padding: 10px 0;
+        }
+
+        .info-box h2 {
+            font-size: 1.2rem;
+            color: #2563eb;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-box p {
+            color: #d1d5db;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .info-box h3 {
+            font-size: 1rem;
+            color: #2563eb;
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-box ul {
+            list-style-type: disc;
             padding-left: 20px;
+            color: #d1d5db;
         }
-        li::before {
-            content: "•";
-            color: #0052ff;
-            font-weight: bold;
-            display: inline-block;
-            width: 20px;
-            margin-left: -20px;
+
+        .info-box li {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
-        .highlight {
-            color: #ffffff;
-            font-weight: 500;
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Адаптивность для телефонов */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.3rem;
+            }
+            .viewer-container {
+                height: 380px;
+            }
+            .menu-btn {
+                padding: 8px 20px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>КӨМІРТЕКТІҢ 3D КРИСТАЛДЫҚ ТОРЛАРЫ</h1>
-        <div class="nav-menu">
-            <button class="nav-btn active" onclick="switchStructure('diamond', event)">Алмаз</button>
-            <button class="nav-btn" onclick="switchStructure('graphite', event)">Графит</button>
+        <h1>Көміртектің 3D кристалдық торлары</h1>
+        <div class="menu">
+            <button class="menu-btn active" onclick="switchStructure('diamond')">АЛМАЗ</button>
+            <button class="menu-btn" onclick="switchStructure('graphite')">ГРАФИТ</button>
         </div>
-        <p>Модельді айналдыру үшін саусақпен немесе тінтуірмен сүйреңіз.</p>
     </header>
 
-    <div id="container3d"></div>
+    <!-- 3D Визуализатор во весь экран посередине -->
+    <div class="viewer-container">
+        <div id="canvas-container"></div>
+        <div class="viewer-hint">Модельді айналдыру үшін саусақпен немесе тінтуірмен сүйреңіз.</div>
+    </div>
 
-    <div class="info-section">
-        <!-- АЛМАЗ -->
-        <div id="info-diamond" class="content-block active">
+    <!-- Информационный блок снизу -->
+    <div class="info-container">
+        <!-- Алмаз -->
+        <div id="info-diamond" class="info-box">
             <h2>Алмаз құрылымының ерекшелігі</h2>
-            <p>Алмаз — көміртектің бірегей аллотропиялық түрленуі болып табылады. Оның ішкі құрылымында жеке оқшауланған молекулалар кездеспейді. Ол тұтас және өзара тығыз байланысқан <span class="highlight">үш өлшемді атомдық қаңқадан</span> құралған.</p>
-            <h2>Құрылымдық сипаттамалары</h2>
+            <p>Алмаз — көміртектің бірегей аллотропиялық түрленуі болып табылады. Оның ішкі құрылымында жеке оқшауланған молекулалар кездеспейді. Ол тұтас және өзара тығыз байланысқан үш өлшемді атомдық қаңқадан құралған.</p>
+            
+            <h3>Құрылымдық сипаттамалары</h3>
             <ul>
-                <li><span class="highlight">Атомдар гибридизациясы:</span> Барлық көміртек атомдары ковалентті байланыс түзу кезінде берік <span class="highlight">sp³</span> күйіне ауысады.</li>
-                <li><span class="highlight">Байланыс геометриясы:</span> Әрбір жеке атом кеңістікте дұрыс тетраэдрдің төбелерінде орналасқан төрт көрші атоммен байланысқан.</li>
-                <li><span class="highlight">Бұрыштар мен қашықтықтар:</span> Валенттік бұрыштар қатаң түрде 109°28′ тең, ал көрші C–C атомдарының арақашықтығы 0,154 нм құрайды.</li>
+                <li><strong>Атомдар гибридизациясы:</strong> Барлық көміртек атомдары ковалентті байланыс түзу кезінде берік $sp^3$ күйіне ауысады.</li>
+                <li><strong>Байланыс геометриясы:</strong> Әрбір жеке атом кеңістікте дұрыс тетраэдрдің төбелерінде орналасқан төрт көрші атоммен байланысқан.</li>
+                <li><strong>Бұрыштар мен қашықтықтар:</strong> Валенттік бұрыштар қатаң түрде $109^\circ 28'$ тең, ал көрші С–С атомдары арасындағы қашықтық $0.154\text{ нм}$.</li>
             </ul>
-            <h2>Қасиеттеріне әсері</h2>
-            <p>Барлық валенттік электрондар коваленттік байланыстарда берік бекітілгендіктен, кристалдық тор ішінде еркін заряд тасымалдаушы бөлшектер болмайды. Осы себепті алмаз толыққанды <span class="highlight">диэлектрик</span> болып табылады. Байланыстардың барлық бағыттар бойынша бірдей беріктікпен таралуы оны Жер бетіндегі <span class="highlight">ең қатты</span> табиғи материалға айналдырады.</p>
         </div>
 
-        <!-- ГРАФИТ -->
-        <div id="info-graphite" class="content-block">
+        <!-- Графит -->
+        <div id="info-graphite" class="info-box hidden">
             <h2>Графит құрылымының ерекшелігі</h2>
-            <p>Графит — алмаз сияқты таза көміртектен тұрады, бірақ мүлдем басқа қабатты құрылымға ие. Мұнда атомдар берік жазық қабаттарға біріккен, бірақ бұл қабаттардың өзара байланысы өте әлсіз.</p>
-            <h2>Құрылымдық сипаттамалары</h2>
+            <p>Графит — көміртектің тағы یک аллотропиялық модификациясы. Оның құрылымы қабатты болып келеді, мұнда атомдар гексагональды (алтыбұрышты) жазық қабаттарды түзеді.</p>
+            
+            <h3>Құрылымдық сипаттамалары</h3>
             <ul>
-                <li><span class="highlight">Атомдар гибридизациясы:</span> Көміртек атомдары <span class="highlight">sp²</span> гибридтену күйінде болады, бұл жазық торлардың түзілуіне әкеледі.</li>
-                <li><span class="highlight">Байланыс геометриясы:</span> Әр атом қабат ішінде үш көрші атоммен байланысып, ара ұясына ұқсас дұрыс алтыбұрыштар желісін құрайды.</li>
-                <li><span class="highlight">Еркін электрондар:</span> Әр атомның төртінші валенттік электроны бос қалады және қабаттар арасында ортақ электрондық бұлт түзеді.</li>
+                <li><strong>Атомдар гибридизациясы:</strong> Қабат ішіндегі көміртек атомдары $sp^2$ күйінде болады.</li>
+                <li><strong>Байланыс ерекшелігі:</strong> Қабат ішіндегі байланыстар өте берік коваленттік, ал қабаттардың өзара ұстасуы әлсіз Ван-дер-Ваальс күштері арқылы жүзеге асады.</li>
+                <li><strong>Қасиеттері:</strong> Осы әлсіз қабаттаралық байланыстың салдарынан графит жұмсақ болып келеді және қабаттар оңай бір-бирине қатысты сырғиды.</li>
             </ul>
-            <h2>Қасиеттеріне әсері</h2>
-            <p>Қабаттар арасындағы байланыстың әлсіздігінен олар бір-біріне қатысты оңай ығысады. Сондықтан графит өте <span class="highlight">жұмсақ әрі жиектері оңай үгітілетін</span> материал (қарындаш өзегі). Ал бос электрондардың болуы оған metalдар сияқты жоғары <span class="highlight">электр өткізгіштік</span> қасиет береді.</p>
         </div>
     </div>
 
-    <script>
-        const structures = {
-            diamond: {
-                atoms: [
-                    {x: 0, y: 0, z: 0},       // 0
-                    {x: 2, y: 2, z: 0},       // 1
-                    {x: 0, y: 2, z: 2},       // 2
-                    {x: 2, y: 0, z: 2},       // 3
-                    {x: 1, y: 1, z: 1},       // 4
-                    {x: 3, y: 3, z: 1},       // 5
-                    {x: 1, y: 3, z: 3},       // 6
-                    {x: 3, y: 1, z: 3},       // 7
-                    {x: 2, y: 2, z: 2}        // 8
-                ],
-                connections: [
-                    {from: 0, to: 4}, {from: 1, to: 4}, {from: 2, to: 4}, {from: 3, to: 4},
-                    {from: 1, to: 5}, {from: 2, to: 6}, {from: 3, to: 7},
-                    {from: 4, to: 8}, {from: 5, to: 8}, {from: 6, to: 8}, {from: 7, to: 8}
-                ]
-            },
-            graphite: {
-                atoms: [
-                    {x: 0, y: 0, z: -1.5},    // 0
-                    {x: 1.5, y: 0, z: -1.5},  // 1
-                    {x: 2.25, y: 1.3, z: -1.5},// 2
-                    {x: 1.5, y: 2.6, z: -1.5}, // 3
-                    {x: 0, y: 2.6, z: -1.5},   // 4
-                    {x: -0.75, y: 1.3, z: -1.5},// 5
-                    {x: 0, y: 0, z: 1.5},     // 6
-                    {x: 1.5, y: 0, z: 1.5},   // 7
-                    {x: 2.25, y: 1.3, z: 1.5}, // 8
-                    {x: 1.5, y: 2.6, z: 1.5},  // 9
-                    {x: 0, y: 2.6, z: 1.5},    // 10
-                    {x: -0.75, y: 1.3, z: 1.5} // 11
-                ],
-                connections: [
-                    {from: 0, to: 1}, {from: 1, to: 2}, {from: 2, to: 3}, 
-                    {from: 3, to: 4}, {from: 4, to: 5}, {from: 5, to: 0},
-                    {from: 6, to: 7}, {from: 7, to: 8}, {from: 8, to: 9}, 
-                    {from: 9, to: 10}, {from: 10, to: 11}, {from: 11, to: 6}
-                ]
-            }
-        };
+    <!-- Подключаем Three.js и OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-        let scene, camera, renderer, crystalGroup;
-        let isDragging = false;
-        let previousPosition = { x: 0, y: 0 };
-        const container = document.getElementById('container3d');
+    <script>
+        let scene, camera, renderer, controls;
+        let currentGroup = null;
 
         function init() {
+            const container = document.getElementById('canvas-container');
+
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x000000);
 
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.z = 12;
+            camera.position.set(0, 3, 13);
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setPixelRatio(window.devicePixelRatio);
             container.appendChild(renderer.domElement);
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            // Включаем поддержку сенсорного управления на смартфонах
+            controls.enableZoom = true;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
-            
-            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.6);
-            dirLight1.position.set(5, 10, 7);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.0);
+            dirLight1.position.set(10, 20, 15);
             scene.add(dirLight1);
 
-            crystalGroup = new THREE.Group();
-            scene.add(crystalGroup);
+            const dirLight2 = new THREE.DirectionalLight(0x93c5fd, 0.5);
+            dirLight2.position.set(-10, -10, -10);
+            scene.add(dirLight2);
 
-            buildLattice('diamond');
-animate();
-container.addEventListener('mousedown', (e) => {
-isDragging = true;
-previousPosition = { x: e.clientX, y: e.clientY };
-});
-window.addEventListener('mousemove', (e) => {
-if (!isDragging) return;
-const deltaX = e.clientX - previousPosition.x;
-const deltaY = e.clientY - previousPosition.y;
-crystalGroup.rotation.y += deltaX * 0.007;
-crystalGroup.rotation.x += deltaY * 0.007;
-previousPosition = { x: e.clientX, y: e.clientY };
-});
-window.addEventListener('mouseup', () => isDragging = false);
-container.addEventListener('touchstart', (e) => {
-isDragging = true;
-const touch = e.touches[0];
-previousPosition = { x: touch.clientX, y: touch.clientY };
-}, { passive: true });
-container.addEventListener('touchmove', (e) => {
-if (!isDragging) return;
-const touch = e.touches[0];
-const deltaX = touch.clientX - previousPosition.x;
-const deltaY = touch.clientY - previousPosition.y;
-crystalGroup.rotation.y += deltaX * 0.009;
-crystalGroup.rotation.x += deltaY * 0.009;
-previousPosition = { x: touch.clientX, y: touch.clientY };
-}, { passive: true });
-window.addEventListener('touchend', () => isDragging = false);
-window.addEventListener('resize', () => {
-camera.aspect = container.clientWidth / container.clientHeight;
-camera.updateProjectionMatrix();
-renderer.setSize(container.clientWidth, container.clientHeight);
-});
-}
-function buildLattice(type) {
-while(crystalGroup.children.length > 0){
-crystalGroup.remove(crystalGroup.children[0]);
-}
-const data = structures[type];
-const atomGeo = new THREE.SphereGeometry(0.35, 32, 32);
-const atomMat = new THREE.MeshPhongMaterial({ color: 0x0052ff, shininess: 100 });
-const lineMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
-let cx = 0, cy = 0, cz = 0;
-data.atoms.forEach(a => { cx += a.x; cy += a.y; cz += a.z; });
-cx /= data.atoms.length; cy /= data.atoms.length; cz /= data.atoms.length;
-data.atoms.forEach(a => {
-const mesh = new THREE.Mesh(atomGeo, atomMat);
-mesh.position.set(a.x - cx, a.y - cy, a.z - cz);
-crystalGroup.add(mesh);
-});
-data.connections.forEach(conn => {
-const p1 = data.atoms[conn.from];
-const p2 = data.atoms[conn.to];
-const v1 = new THREE.Vector3(p1.x - cx, p1.y - cy, p1.z - cz);
-const v2 = new THREE.Vector3(p2.x - cx, p2.y - cy, p2.z - cz);
-const distance = v1.distanceTo(v2);
-const cylGeo = new THREE.CylinderGeometry(0.08, 0.08, distance, 12);
-const cylinder = new THREE.Mesh(cylGeo, lineMat);
-cylinder.position.copy(v1).add(v2).multiplyScalar(0.5);
-cylinder.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), v2.clone().sub(v1).normalize());
-crystalGroup.add(cylinder);
-});
-crystalGroup.rotation.set(0.4, 0.6, 0);
-}
-function switchStructure(type, event) {
-document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-if(event) event.target.classList.add('active');
-document.querySelectorAll('.content-block').forEach(block => block.classList.remove('active'));
-document.getElementById(info-${type}).classList.add('active');
-buildLattice(type);
-}
-function animate() {
-requestAnimationFrame(animate);
-if (!isDragging) {
-crystalGroup.rotation.y += 0.003;
-}
-renderer.render(scene, camera);
-}
-window.onload = init;
+            createDiamondModel();
+            animate();
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function createAtom(x, y, z) {
+            const geometry = new THREE.SphereGeometry(0.35, 32, 32);
+            const material = new THREE.MeshStandardMaterial({ 
+                color: 0x1a1a1a, 
+                roughness: 0.3,
+                metalness: 0.2
+            });
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.set(x, y, z);
+            return sphere;
+        }
+
+        function createBond(v1, v2) {
+            const distance = v1.distanceTo(v2);
+            const geometry = new THREE.CylinderGeometry(0.08, 0.08, distance, 16);
+            const material = new THREE.MeshStandardMaterial({ 
+                color: 0xe5e7eb, 
+                roughness: 0.3 
+            });
+            const cylinder = new THREE.Mesh(geometry, material);
+
+            cylinder.position.copy(v1).add(v2).multiplyScalar(0.5);
+            cylinder.lookAt(v2);
+            cylinder.rotateX(Math.PI / 2);
+            return cylinder;
+        }
+
+        // Модель Алмаза
+        function createDiamondModel() {
+            if (currentGroup) scene.remove(currentGroup);
+            currentGroup = new THREE.Group();
+
+            const d = 1.6;
+            const rawCoords = [
+                [0, 1.8, 0],
+                [0, 0, 0],
+                [d, 0, d],
+                [d, 0, -d],
+                [-d, 0, d],
+                [-d, 0, -d],
+                [0, -1.8, 0],
+                [d*1.5, -1.8, d*1.5],
+                [d*1.5, -1.8, -d*1.5],
+                [-d*1.5, -1.8, d*1.5],
+                [-d*1.5, -1.8, -d*1.5],
+                [d*0.75, 0.9, d*0.75],
+                [-d*0.75, 0.9, -d*0.75],
+                [d*0.75, -0.9, -d*0.75],
+                [-d*0.75, -0.9, d*0.75]
+            ];
+
+            const vectors = rawCoords.map(c => new THREE.Vector3(...c));
+            vectors.forEach(v => currentGroup.add(createAtom(v.x, v.y, v.z)));
+
+            for (let i = 0; i < vectors.length; i++) {
+                for (let j = i + 1; j < vectors.length; j++) {
+                    if (vectors[i].distanceTo(vectors[j]) < d * 1.6) {
+                        currentGroup.add(createBond(vectors[i], vectors[j]));
+                    }
+                }
+            }
+
+            currentGroup.position.y = -0.2;
+            scene.add(currentGroup);
+        }
+
+        // Модель Графита
+        function createGraphiteModel() {
+            if (currentGroup) scene.remove(currentGroup);
+            currentGroup = new THREE.Group();
+
+            const r = 1.2;
+            const hDist = 1.8;
+            const yLevels = [-hDist, 0, hDist];
+            const allLayersVectors = [];
+
+            yLevels.forEach((yPos, layerIdx) => {
+                const layerVectors = [];
+                const xOffset = (layerIdx % 2 === 1) ? r * 0.866 : 0;
+                const zOffset = (layerIdx % 2 === 1) ? r * 0.5 : 0;
+
+                const hexCenters = [
+                    [0, 0], [1.73 * r, 0], [-1.73 * r, 0],
+                    [0.86 * r, 1.5 * r], [-0.86 * r, 1.5 * r],
+                    [0.86 * r, -1.5 * r], [-0.86 * r, -1.5 * r]
+                ];
+
+                hexCenters.forEach(([cx, cz]) => {
+                    const cxS = cx + xOffset;
+                    const czS = cz + zOffset;
+                    const ringPoints = [];
+
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (i * Math.PI) / 3;
+                        const hx = cxS + r * Math.cos(angle);
+                        const hz = czS + r * Math.sin(angle);
+                        
+                        let existing = layerVectors.find(v => v.distanceTo(new THREE.Vector3(hx, yPos, hz)) < 0.2);
+                        if (!existing) {
+                            const vNew = new THREE.Vector3(hx, yPos, hz);
+                            layerVectors.push(vNew);
+                            currentGroup.add(createAtom(vNew.x, vNew.y, vNew.z));
+                            ringPoints.push(vNew);
+                        } else {
+                            ringPoints.push(existing);
+                        }
+                    }
+
+                    for (let i = 0; i < ringPoints.length; i++) {
+                        for (let j = i + 1; j < ringPoints.length; j++) {
+                            if (ringPoints[i].distanceTo(ringPoints[j]) < r * 1.15) {
+                                currentGroup.add(createBond(ringPoints[i], ringPoints[j]));
+                            }
+                        }
+                    }
+                });
+
+                allLayersVectors.push(layerVectors);
+            });
+
+            for (let i = 0; i < allLayersVectors[0].length; i++) {
+                const p1 = allLayersVectors[0][i];
+                let closest2 = null;
+                let minDist2 = 999;
+                allLayersVectors[1].forEach(p2 => {
+                    const dist = Math.hypot(p1.x - p2.x, p1.z - p2.z);
+                    if (dist < minDist2) {
+                        minDist2 = dist;
+                        closest2 = p2;
+                    }
+                });
+                if (closest2 && minDist2 < 0.3) {
+                    currentGroup.add(createBond(p1, closest2));
+                }
+            }
+
+            for (let i = 0; i < allLayersVectors[1].length; i++) {
+                const p2 = allLayersVectors[1][i];
+                let closest3 = null;
+                let minDist3 = 999;
+                allLayersVectors[2].forEach(p3 => {
+                    const dist = Math.hypot(p2.x - p3.x, p2.z - p3.z);
+                    if (dist < minDist3) {
+                        minDist3 = dist;
+                        closest3 = p3;
+                    }
+                });
+                if (closest3 && minDist3 < 0.3) {
+                    currentGroup.add(createBond(p2, closest3));
+                }
+            }
+
+            scene.add(currentGroup);
+        }
+
+        function switchStructure(type) {
+            const buttons = document.querySelectorAll('.menu-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById('info-diamond').classList.add('hidden');
+            document.getElementById('info-graphite').classList.add('hidden');
+
+            if (type === 'diamond') {
+                buttons[0].classList.add('active');
+                document.getElementById('info-diamond').classList.remove('hidden');
+                createDiamondModel();
+            } else {
+                buttons[1].classList.add('active');
+                document.getElementById('info-graphite').classList.remove('hidden');
+                createGraphiteModel();
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (currentGroup) {
+                currentGroup.rotation.y += 0.003;
+            }
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

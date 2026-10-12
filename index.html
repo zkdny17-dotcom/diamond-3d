@@ -22,7 +22,6 @@
             padding: 20px;
         }
 
-        /* Заголовок */
         header {
             text-align: center;
             margin-bottom: 20px;
@@ -36,7 +35,6 @@
             text-transform: uppercase;
         }
 
-        /* Главное меню (кнопки) */
         .menu {
             display: flex;
             gap: 15px;
@@ -69,7 +67,6 @@
             box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
         }
 
-        /* Центральное 3D окно */
         .viewer-container {
             width: 100%;
             max-width: 1000px;
@@ -86,7 +83,7 @@
         #canvas-container {
             width: 100%;
             height: 100%;
-            touch-action: none; /* Важно для мобильных устройств (чтобы скролл не мешал вращению 3D) */
+            touch-action: none;
         }
 
         .viewer-hint {
@@ -104,7 +101,6 @@
             white-space: nowrap;
         }
 
-        /* Информационный блок снизу */
         .info-container {
             width: 100%;
             max-width: 1000px;
@@ -151,7 +147,6 @@
             display: none !important;
         }
 
-        /* Адаптивность для телефонов */
         @media (max-width: 768px) {
             header h1 {
                 font-size: 1.3rem;
@@ -176,42 +171,37 @@
         </div>
     </header>
 
-    <!-- 3D Визуализатор во весь экран посередине -->
     <div class="viewer-container">
         <div id="canvas-container"></div>
         <div class="viewer-hint">Модельді айналдыру үшін саусақпен немесе тінтуірмен сүйреңіз.</div>
     </div>
 
-    <!-- Информационный блок снизу -->
     <div class="info-container">
-        <!-- Алмаз -->
         <div id="info-diamond" class="info-box">
             <h2>Алмаз құрылымының ерекшелігі</h2>
-            <p>Алмаз — көміртектің бірегей аллотропиялық түрленуі болып табылады. Оның ішкі құрылымында жеке оқшауланған молекулалар кездеспейді. Ол тұтас және өзара тығыз байланысқан үш өлшемді атомдық қаңқадан құралған.</p>
+            <p>Алмаз — көміртектің бірегей аллотропиялық түрленуі болып табылады[cite: 1]. Оның ішкі құрылымында жеке оқшауланған молекулалар кездеспейді. Ол тұтас және өзара тығыз байланысқан үш өлшемді атомдық қаңқадан құралған[cite: 1].</p>
             
             <h3>Құрылымдық сипаттамалары</h3>
             <ul>
                 <li><strong>Атомдар гибридизациясы:</strong> Барлық көміртек атомдары ковалентті байланыс түзу кезінде берік $sp^3$ күйіне ауысады.</li>
-                <li><strong>Байланыс геометриясы:</strong> Әрбір жеке атом кеңістікте дұрыс тетраэдрдің төбелерінде орналасқан төрт көрші атоммен байланысқан.</li>
+                <li><strong>Байланыс геометриясы:</strong> Әрбір жеке атом кеңістікте дұрыс тетраэдрдің төбелерінде орналасқан төрт көрші атоммен байланысқан[cite: 1].</li>
                 <li><strong>Бұрыштар мен қашықтықтар:</strong> Валенттік бұрыштар қатаң түрде $109^\circ 28'$ тең, ал көрші С–С атомдары арасындағы қашықтық $0.154\text{ нм}$.</li>
             </ul>
         </div>
 
-        <!-- Графит -->
         <div id="info-graphite" class="info-box hidden">
             <h2>Графит құрылымының ерекшелігі</h2>
-            <p>Графит — көміртектің тағы یک аллотропиялық модификациясы. Оның құрылымы қабатты болып келеді, мұнда атомдар гексагональды (алтыбұрышты) жазық қабаттарды түзеді.</p>
+            <p>Графит — көміртектің тағы бір аллотропиялық модификациясы[cite: 2]. Оның құрылымы қабатты болып келеді, мұнда атомдар гексагональды (алтыбұрышты) жазық қабаттарды түзеді[cite: 2].</p>
             
             <h3>Құрылымдық сипаттамалары</h3>
             <ul>
                 <li><strong>Атомдар гибридизациясы:</strong> Қабат ішіндегі көміртек атомдары $sp^2$ күйінде болады.</li>
                 <li><strong>Байланыс ерекшелігі:</strong> Қабат ішіндегі байланыстар өте берік коваленттік, ал қабаттардың өзара ұстасуы әлсіз Ван-дер-Ваальс күштері арқылы жүзеге асады.</li>
-                <li><strong>Қасиеттері:</strong> Осы әлсіз қабаттаралық байланыстың салдарынан графит жұмсақ болып келеді және қабаттар оңай бір-бирине қатысты сырғиды.</li>
+                <li><strong>Қасиеттері:</strong> Осы әлсіз қабаттаралық байланыстың салдарынан графит жұмсақ болып келеді және қабаттар оңай бір-біріне қатысты сырғиды.</li>
             </ul>
         </div>
     </div>
 
-    <!-- Подключаем Three.js и OrbitControls -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
@@ -226,7 +216,7 @@
             scene.background = new THREE.Color(0x000000);
 
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 3, 13);
+            camera.position.set(0, 2, 11);
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
@@ -236,8 +226,6 @@
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
-            // Включаем поддержку сенсорного управления на смартфонах
-            controls.enableZoom = true;
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
@@ -283,131 +271,143 @@
             return cylinder;
         }
 
-        // Модель Алмаза
         function createDiamondModel() {
             if (currentGroup) scene.remove(currentGroup);
             currentGroup = new THREE.Group();
 
-            const d = 1.6;
-            const rawCoords = [
-                [0, 1.8, 0],
-                [0, 0, 0],
-                [d, 0, d],
-                [d, 0, -d],
-                [-d, 0, d],
-                [-d, 0, -d],
-                [0, -1.8, 0],
-                [d*1.5, -1.8, d*1.5],
-                [d*1.5, -1.8, -d*1.5],
-                [-d*1.5, -1.8, d*1.5],
-                [-d*1.5, -1.8, -d*1.5],
-                [d*0.75, 0.9, d*0.75],
-                [-d*0.75, 0.9, -d*0.75],
-                [d*0.75, -0.9, -d*0.75],
-                [-d*0.75, -0.9, d*0.75]
+            const nodes = [];
+            const baseOffsets = [
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(1, 1, 0),
+                new THREE.Vector3(1, 0, 1),
+                new THREE.Vector3(0, 1, 1)
             ];
 
-            const vectors = rawCoords.map(c => new THREE.Vector3(...c));
-            vectors.forEach(v => currentGroup.add(createAtom(v.x, v.y, v.z)));
+            const step = 1.6;
+            const subShift = new THREE.Vector3(0.5, 0.5, 0.5);
 
-            for (let i = 0; i < vectors.length; i++) {
-                for (let j = i + 1; j < vectors.length; j++) {
-                    if (vectors[i].distanceTo(vectors[j]) < d * 1.6) {
-                        currentGroup.add(createBond(vectors[i], vectors[j]));
+            for (let x = -1; x <= 1; x++) {
+                for (let y = -1; y <= 1; y++) {
+                    for (let z = -1; z <= 1; z++) {
+                        const cellCenter = new THREE.Vector3(x * 2, y * 2, z * 2);
+                        
+                        baseOffsets.forEach(offset => {
+                            const p1 = cellCenter.clone().add(offset).multiplyScalar(step);
+                            const p2 = p1.clone().add(subShift.clone().multiplyScalar(step));
+
+                            if (!nodes.some(n => n.distanceTo(p1) < 0.1)) {
+                                nodes.push(p1);
+                                currentGroup.add(createAtom(p1.x, p1.y, p1.z));
+                            }
+                            if (!nodes.some(n => n.distanceTo(p2) < 0.1)) {
+                                nodes.push(p2);
+                                currentGroup.add(createAtom(p2.x, p2.y, p2.z));
+                            }
+                        });
                     }
                 }
             }
 
-            currentGroup.position.y = -0.2;
+            const bondDist = step * Math.sqrt(3) / 2;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dist = nodes[i].distanceTo(nodes[j]);
+                    if (Math.abs(dist - bondDist) < 0.15) {
+                        currentGroup.add(createBond(nodes[i], nodes[j]));
+                    }
+                }
+            }
+
+            currentGroup.position.set(0, 0, 0);
             scene.add(currentGroup);
         }
 
-        // Модель Графита
+        // --- Исправленная модель Графита (компактные слои с вертикальными связями) ---
         function createGraphiteModel() {
             if (currentGroup) scene.remove(currentGroup);
             currentGroup = new THREE.Group();
 
-            const r = 1.2;
-            const hDist = 1.8;
-            const yLevels = [-hDist, 0, hDist];
-            const allLayersVectors = [];
+            const a = 1.2; 
+            const h = 1.3; // Уменьшенное расстояние между слоями, как в учебнике
+            const yLevels = [-h, 0, h]; // Три слоя графита
+            const layerNodes = [];
 
-            yLevels.forEach((yPos, layerIdx) => {
-                const layerVectors = [];
-                const xOffset = (layerIdx % 2 === 1) ? r * 0.866 : 0;
-                const zOffset = (layerIdx % 2 === 1) ? r * 0.5 : 0;
+            yLevels.forEach((y, layerIndex) => {
+                const nodes = [];
+                const xOffset = (layerIndex % 2 === 1) ? a * 0.866 : 0;
+                const zOffset = (layerIndex % 2 === 1) ? a * 0.5 : 0;
 
-                const hexCenters = [
-                    [0, 0], [1.73 * r, 0], [-1.73 * r, 0],
-                    [0.86 * r, 1.5 * r], [-0.86 * r, 1.5 * r],
-                    [0.86 * r, -1.5 * r], [-0.86 * r, -1.5 * r]
+                const centers = [
+                    [0, 0],
+                    [2.6 * a, 0],
+                    [-2.6 * a, 0],
+                    [1.3 * a, 2.25 * a],
+                    [-1.3 * a, 2.25 * a],
+                    [1.3 * a, -2.25 * a],
+                    [-1.3 * a, -2.25 * a]
                 ];
 
-                hexCenters.forEach(([cx, cz]) => {
+                centers.forEach(([cx, cz]) => {
                     const cxS = cx + xOffset;
                     const czS = cz + zOffset;
-                    const ringPoints = [];
+                    const hexPoints = [];
 
                     for (let i = 0; i < 6; i++) {
                         const angle = (i * Math.PI) / 3;
-                        const hx = cxS + r * Math.cos(angle);
-                        const hz = czS + r * Math.sin(angle);
-                        
-                        let existing = layerVectors.find(v => v.distanceTo(new THREE.Vector3(hx, yPos, hz)) < 0.2);
+                        const hx = cxS + a * Math.cos(angle);
+                        const hz = czS + a * Math.sin(angle);
+
+                        let existing = nodes.find(n => n.pos.distanceTo(new THREE.Vector3(hx, y, hz)) < 0.1);
                         if (!existing) {
-                            const vNew = new THREE.Vector3(hx, yPos, hz);
-                            layerVectors.push(vNew);
-                            currentGroup.add(createAtom(vNew.x, vNew.y, vNew.z));
-                            ringPoints.push(vNew);
+                            const pos = new THREE.Vector3(hx, y, hz);
+                            const mesh = createAtom(pos.x, pos.y, pos.z);
+                            currentGroup.add(mesh);
+                            const nodeObj = { pos, mesh, connections: [] };
+                            nodes.push(nodeObj);
+                            hexPoints.push(nodeObj);
                         } else {
-                            ringPoints.push(existing);
+                            hexPoints.push(existing);
                         }
                     }
 
-                    for (let i = 0; i < ringPoints.length; i++) {
-                        for (let j = i + 1; j < ringPoints.length; j++) {
-                            if (ringPoints[i].distanceTo(ringPoints[j]) < r * 1.15) {
-                                currentGroup.add(createBond(ringPoints[i], ringPoints[j]));
-                            }
+                    for (let i = 0; i < 6; i++) {
+                        const p1 = hexPoints[i];
+                        const p2 = hexPoints[(i + 1) % 6];
+                        if (!p1.connections.includes(p2)) {
+                            currentGroup.add(createBond(p1.pos, p2.pos));
+                            p1.connections.push(p2);
+                            p2.connections.push(p1);
                         }
                     }
                 });
 
-                allLayersVectors.push(layerVectors);
+                layerNodes.push(nodes);
             });
 
-            for (let i = 0; i < allLayersVectors[0].length; i++) {
-                const p1 = allLayersVectors[0][i];
-                let closest2 = null;
-                let minDist2 = 999;
-                allLayersVectors[1].forEach(p2 => {
-                    const dist = Math.hypot(p1.x - p2.x, p1.z - p2.z);
-                    if (dist < minDist2) {
-                        minDist2 = dist;
-                        closest2 = p2;
+            // Добавляем четкие вертикальные стержни между слоями
+            for (let l = 0; l < layerNodes.length - 1; l++) {
+                const currentLayer = layerNodes[l];
+                const nextLayer = layerNodes[l + 1];
+
+                currentLayer.forEach(node1 => {
+                    let closest = null;
+                    let minD = 999;
+                    nextLayer.forEach(node2 => {
+                        const dist = Math.hypot(node1.pos.x - node2.pos.x, node1.pos.z - node2.pos.z);
+                        if (dist < minD) {
+                            minD = dist;
+                            closest = node2;
+                        }
+                    });
+
+                    // Соединяем вертикально узлы, находящиеся ровно друг под другом
+                    if (closest && minD < 0.25) {
+                        currentGroup.add(createBond(node1.pos, closest.pos));
                     }
                 });
-                if (closest2 && minDist2 < 0.3) {
-                    currentGroup.add(createBond(p1, closest2));
-                }
             }
 
-            for (let i = 0; i < allLayersVectors[1].length; i++) {
-                const p2 = allLayersVectors[1][i];
-                let closest3 = null;
-                let minDist3 = 999;
-                allLayersVectors[2].forEach(p3 => {
-                    const dist = Math.hypot(p2.x - p3.x, p2.z - p3.z);
-                    if (dist < minDist3) {
-                        minDist3 = dist;
-                        closest3 = p3;
-                    }
-                });
-                if (closest3 && minDist3 < 0.3) {
-                    currentGroup.add(createBond(p2, closest3));
-                }
-            }
-
+            currentGroup.position.set(0, 0, 0);
             scene.add(currentGroup);
         }
 

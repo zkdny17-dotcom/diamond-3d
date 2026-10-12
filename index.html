@@ -292,27 +292,31 @@
             return cylinder;
         }
 
-        // --- Модель Алмаза по новым точным координатам[cite: 15] ---
+        // --- Алмаз моделі (Дұрыс кристалдық тор базасы) ---
         function createDiamondModel() {
             if (currentGroup) scene.remove(currentGroup);
             currentGroup = new THREE.Group();
 
-            const rawCoords = [
-                [3, -1.5, -1.5], [0, -1.5, -1.5], [0.75, -0.75, -0.75], [1.5, 0, -1.5],
-                [2.25, 0.75, -0.75], [3, 1.5, -1.5], [1.5, -1.5, 0], [2.25, -0.75, 0.75],
-                [3, 0, 0], [3, -1.5, 1.5], [-3, -1.5, -1.5], [-2.25, -0.75, -0.75],
-                [-1.5, 0, -1.5], [-0.75, 0.75, -0.75], [0, 1.5, -1.5], [-1.5, -1.5, 0],
-                [-0.75, -0.75, 0.75], [0, 0, 0], [0.75, 0.75, 0.75], [1.5, 1.5, 0],
-                [0, -1.5, 1.5], [1.5, 0, 1.5], [3, 1.5, 1.5], [-3, 1.5, -1.5],
-                [-3, 0, 0], [-2.25, 0.75, 0.75], [-1.5, 1.5, 0], [-3, -1.5, 1.5],
-                [-1.5, 0, 1.5], [0, 1.5, 1.5], [-3, 1.5, 1.5]
+            const scale = 2.2;
+            const unitCellOffsets = [
+                [0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0.5], [0, 0.5, 0.5],
+                [0.5, 0.5, 0.5], [0, 1, 0.5], [0.5, 1, 0], [1, 0.5, 0],
+                [0.25, 0.25, 0.25], [0.75, 0.75, 0.25], [0.75, 0.25, 0.75], [0.25, 0.75, 0.75],
+                [0.75, 0.75, 0.75], [0.25, 0.25, 0.75], [0.25, 0.75, 0.25], [0.75, 0.25, 0.25]
             ];
 
-            let cx = 0, cy = 0, cz = 0;
-            rawCoords.forEach(c => { cx += c[0]; cy += c[1]; cz += c[2]; });
-            cx /= rawCoords.length; cy /= rawCoords.length; cz /= rawCoords.length;
+            let rawCoords = [];
+            for (let x = 0; x < 2; x++) {
+                for (let y = 0; y < 2; y++) {
+                    for (let z = 0; z < 2; z++) {
+                        unitCellOffsets.forEach(pos => {
+                            rawCoords.push([pos[0] + x - 0.5, pos[1] + y - 0.5, pos[2] + z - 0.5]);
+                        });
+                    }
+                }
+            }
 
-            const vectors = rawCoords.map(c => new THREE.Vector3(c[0] - cx, c[1] - cy, c[2] - cz));
+            const vectors = rawCoords.map(c => new THREE.Vector3(c[0] * scale, c[1] * scale, c[2] * scale));
             const nodes = [];
 
             vectors.forEach(v => {
@@ -325,8 +329,7 @@
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
                     const dist = nodes[i].distanceTo(nodes[j]);
-                    // У алмаза длина связи C-C примерно 1.54 Å (в этих масштабах около 0.8 - 1.4)
-                    if (dist > 0.7 && dist < 1.45) {
+                    if (dist > 0.4 && dist < scale * 0.55) {
                         currentGroup.add(createBond(nodes[i], nodes[j]));
                     }
                 }
@@ -336,7 +339,7 @@
             scene.add(currentGroup);
         }
 
-        // --- Модель Графита (неизменная, по старым координатам) ---
+        // --- Графит моделі ---
         function createGraphiteModel() {
             if (currentGroup) scene.remove(currentGroup);
             currentGroup = new THREE.Group();

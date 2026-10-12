@@ -191,13 +191,11 @@
     </div>
 
     <div class="info-container">
-        <!-- Общая информация об элементе (всегда видна или общая) -->
         <div class="element-card">
             <h4>Химиялық элемент туралы жалпы мәлімет (Көміртек — C)</h4>
             <p>Көміртек (Carbonium) — Менделеев кестесінің II периоды, IV топтың негізгі топшасында орналасқан элемент. Реттік нөмірі — 6, атомдық массасы — 12.011. Көміртек атомының сыртқы электрондық қабатында 4 валенттік электроны бар (2s²2p²), бұл оған басқа атомдармен берік коваленттік байланыстар түзуге және әртүрлі аллотропиялық модификациялар құруға мүмкіндік береді.</p>
         </div>
 
-        <!-- Алмаз -->
         <div id="info-diamond" class="info-box">
             <h2>Алмаз құрылымы және sp³ гибридизациясы</h2>
             <p>Алмаз — көміртектің табиғи аллотропиялық түрленулерінің бірі[cite: 1]. Оның ішкі құрылымында жеке оқшауланған молекулалар кездеспейді[cite: 1]. Ол тұтас, үш өлшемді кеңістіктік атомдық қаңқадан тұрады[cite: 1], бұл оған ерекше беріктік береді.</p>
@@ -211,7 +209,6 @@
             </ul>
         </div>
 
-        <!-- Графит -->
         <div id="info-graphite" class="info-box hidden">
             <h2>Графит құрылымы және sp² гибридизациясы</h2>
             <p>Графит — көміртектің термодинамикалық тұрақты аллотропиялық түрі[cite: 2]. Алмаздан айырмашылығы, оның құрылымы қабатты болып келеді, мұнда атомдар гексагональды (алтыбұрышты) жазық қабаттарды түзеді[cite: 2].</p>
@@ -220,7 +217,7 @@
             <ul>
                 <li><strong>sp² Гибридизациясы:</strong> Қабат ішіндегі көміртек атомдарының бір s- және екі p-орбиталы гибридтеледі. Үш sp²-орбиталь жазықтықта 120° бұрыш жасап, өзара берік коваленттік байланыстар түзеді. Төртінші p-орбиталь қабатқа перпендикуляр орналасып, жалпы π-байланыс жүйесін (делокализацияланған электрондарды) құрайды.</li>
                 <li><strong>Қабаттаралық байланыс:</strong> Жеке қабаттар өзара әлсіз Ван-дер-Ваальс күштері арқылы ғана ұстасып тұрады. Сондықтан қабаттар бір-біріне қатысты оңай сырғып, бөлініп шыға алады.</li>
-                <li><strong>Электр өткізгіштігі мен қасиеттері:</strong> Декализованған электрондардың болуына байланысты графит электр тогы мен жылуды жақсы өткізеді. Моос шкаласы бойынша қаттылығы небары 1–2 (өчень жұмсақ).</li>
+                <li><strong>Электр өткізгіштігі мен қасиеттері:</strong> Делокализацияланған электрондардың болуына байланысты графит электр тогы мен жылуды жақсы өткізеді. Моос шкаласы бойынша қаттылығы небары 1–2 (өте жұмсақ).</li>
                 <li><strong>Қолданылуы:</strong> Қарандаш өнеркәсібінде, құрғақ майлау материалдарында, электродтар мен аккумуляторлар жасауда кеңінен қолданылады.</li>
             </ul>
         </div>
@@ -295,48 +292,44 @@
             return cylinder;
         }
 
+        // Модель Алмаза
         function createDiamondModel() {
             if (currentGroup) scene.remove(currentGroup);
             currentGroup = new THREE.Group();
 
-            const nodes = [];
-            const baseOffsets = [
-                new THREE.Vector3(0, 0, 0),
-                new THREE.Vector3(1, 1, 0),
-                new THREE.Vector3(1, 0, 1),
-                new THREE.Vector3(0, 1, 1)
+            const d = 1.4;
+            const rawCoords = [
+                [0, 2.2, 0],
+                [0, 1.1, 1.2],
+                [1.0, 1.1, -0.6],
+                [-1.0, 1.1, -0.6],
+                [0, 0, 0],
+                [1.5, 0, 1.5],
+                [-1.5, 0, 1.5],
+                [0, 0, -2.1],
+                [0, -1.1, 1.2],
+                [1.0, -1.1, -0.6],
+                [-1.0, -1.1, -0.6],
+                [0, -2.2, 0],
+                [2.2, -1.8, 2.2],
+                [-2.2, -1.8, 2.2],
+                [0, -1.8, -2.8]
             ];
 
-            const step = 1.6;
-            const subShift = new THREE.Vector3(0.5, 0.5, 0.5);
+            const vectors = rawCoords.map(c => new THREE.Vector3(...c));
+            const nodes = [];
 
-            for (let x = -1; x <= 1; x++) {
-                for (let y = -1; y <= 1; y++) {
-                    for (let z = -1; z <= 1; z++) {
-                        const cellCenter = new THREE.Vector3(x * 2, y * 2, z * 2);
-                        
-                        baseOffsets.forEach(offset => {
-                            const p1 = cellCenter.clone().add(offset).multiplyScalar(step);
-                            const p2 = p1.clone().add(subShift.clone().multiplyScalar(step));
-
-                            if (!nodes.some(n => n.distanceTo(p1) < 0.1)) {
-                                nodes.push(p1);
-                                currentGroup.add(createAtom(p1.x, p1.y, p1.z));
-                            }
-                            if (!nodes.some(n => n.distanceTo(p2) < 0.1)) {
-                                nodes.push(p2);
-                                currentGroup.add(createAtom(p2.x, p2.y, p2.z));
-                            }
-                        });
-                    }
+            vectors.forEach(v => {
+                if (!nodes.some(n => n.distanceTo(v) < 0.1)) {
+                    nodes.push(v);
+                    currentGroup.add(createAtom(v.x, v.y, v.z));
                 }
-            }
+            });
 
-            const bondDist = step * Math.sqrt(3) / 2;
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
                     const dist = nodes[i].distanceTo(nodes[j]);
-                    if (Math.abs(dist - bondDist) < 0.15) {
+                    if (dist < d * 1.65) {
                         currentGroup.add(createBond(nodes[i], nodes[j]));
                     }
                 }
@@ -346,84 +339,85 @@
             scene.add(currentGroup);
         }
 
+        // --- Точная копия физической модели графита с фотографии ---
         function createGraphiteModel() {
             if (currentGroup) scene.remove(currentGroup);
             currentGroup = new THREE.Group();
 
-            const a = 1.2; 
-            const h = 1.3; 
-            const yLevels = [-h, 0, h]; 
-            const layerNodes = [];
+            const r = 1.3;
+            const h = 1.8; // Расстояние между нижним, средним и верхним слоями
+            const yLevels = [-h, 0, h];
+            const allLayersNodes = [];
 
-            yLevels.forEach((y, layerIndex) => {
-                const nodes = [];
-                const xOffset = (layerIndex % 2 === 1) ? a * 0.866 : 0;
-                const zOffset = (layerIndex % 2 === 1) ? a * 0.5 : 0;
+            yLevels.forEach((yPos, layerIdx) => {
+                const layerNodes = [];
+                // Чередование слоев структуры графита (ABAB)
+                const shiftX = (layerIdx % 2 === 1) ? r * 0.866 : 0;
+                const shiftZ = (layerIdx % 2 === 1) ? r * 0.5 : 0;
 
+                // Точные центры гексагонов для симметрии
                 const centers = [
                     [0, 0],
-                    [2.6 * a, 0],
-                    [-2.6 * a, 0],
-                    [1.3 * a, 2.25 * a],
-                    [-1.3 * a, 2.25 * a],
-                    [1.3 * a, -2.25 * a],
-                    [-1.3 * a, -2.25 * a]
+                    [1.73 * r, 0],
+                    [-1.73 * r, 0],
+                    [0.86 * r, 1.5 * r],
+                    [-0.86 * r, 1.5 * r],
+                    [0.86 * r, -1.5 * r],
+                    [-0.86 * r, -1.5 * r]
                 ];
 
                 centers.forEach(([cx, cz]) => {
-                    const cxS = cx + xOffset;
-                    const czS = cz + zOffset;
-                    const hexPoints = [];
+                    const cxS = cx + shiftX;
+                    const czS = cz + shiftZ;
+                    const ringPoints = [];
 
                     for (let i = 0; i < 6; i++) {
                         const angle = (i * Math.PI) / 3;
-                        const hx = cxS + a * Math.cos(angle);
-                        const hz = czS + a * Math.sin(angle);
+                        const hx = cxS + r * Math.cos(angle);
+                        const hz = czS + r * Math.sin(angle);
 
-                        let existing = nodes.find(n => n.pos.distanceTo(new THREE.Vector3(hx, y, hz)) < 0.1);
+                        let existing = layerNodes.find(n => n.distanceTo(new THREE.Vector3(hx, yPos, hz)) < 0.1);
                         if (!existing) {
-                            const pos = new THREE.Vector3(hx, y, hz);
-                            const mesh = createAtom(pos.x, pos.y, pos.z);
-                            currentGroup.add(mesh);
-                            const nodeObj = { pos, mesh, connections: [] };
-                            nodes.push(nodeObj);
-                            hexPoints.push(nodeObj);
+                            const vNew = new THREE.Vector3(hx, yPos, hz);
+                            layerNodes.push(vNew);
+                            currentGroup.add(createAtom(vNew.x, vNew.y, vNew.z));
+                            ringPoints.push(vNew);
                         } else {
-                            hexPoints.push(existing);
+                            ringPoints.push(existing);
                         }
                     }
 
-                    for (let i = 0; i < 6; i++) {
-                        const p1 = hexPoints[i];
-                        const p2 = hexPoints[(i + 1) % 6];
-                        if (!p1.connections.includes(p2)) {
-                            currentGroup.add(createBond(p1.pos, p2.pos));
-                            p1.connections.push(p2);
-                            p2.connections.push(p1);
+                    // Соединяем связи внутри каждого гексагонального кольца
+                    for (let i = 0; i < ringPoints.length; i++) {
+                        for (let j = i + 1; j < ringPoints.length; j++) {
+                            if (ringPoints[i].distanceTo(ringPoints[j]) < r * 1.15) {
+                                currentGroup.add(createBond(ringPoints[i], ringPoints[j]));
+                            }
                         }
                     }
                 });
 
-                layerNodes.push(nodes);
+                allLayersNodes.push(layerNodes);
             });
 
-            for (let l = 0; l < layerNodes.length - 1; l++) {
-                const currentLayer = layerNodes[l];
-                const nextLayer = layerNodes[l + 1];
+            // Добавляем вертикальные межслойные стержни (как на учебной модели)
+            for (let l = 0; l < allLayersNodes.length - 1; l++) {
+                const layerA = allLayersNodes[l];
+                const layerB = allLayersNodes[l + 1];
 
-                currentLayer.forEach(node1 => {
+                layerA.forEach(pA => {
                     let closest = null;
-                    let minD = 999;
-                    nextLayer.forEach(node2 => {
-                        const dist = Math.hypot(node1.pos.x - node2.pos.x, node1.pos.z - node2.pos.z);
-                        if (dist < minD) {
-                            minD = dist;
-                            closest = node2;
+                    let minDist = 999;
+                    layerB.forEach(pB => {
+                        const dist = Math.hypot(pA.x - pB.x, pA.z - pB.z);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            closest = pB;
                         }
                     });
 
-                    if (closest && minD < 0.25) {
-                        currentGroup.add(createBond(node1.pos, closest.pos));
+                    if (closest && minDist < 0.25) {
+                        currentGroup.add(createBond(pA, closest));
                     }
                 });
             }

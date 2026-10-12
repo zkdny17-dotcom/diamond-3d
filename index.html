@@ -198,7 +198,7 @@
 
         <div id="info-diamond" class="info-box">
             <h2>Алмаз құрылымы және sp³ гибридизациясы</h2>
-            <p>Алмаз — көміртектің табиғи аллотропиялық түрленулерінің бірі[cite: 1]. Оның ішкі құрылымында жеке оқшауланған молекулалар кездеспейді[cite: 1]. Ол тұтас, үш өлшемді кеңістіктік атомдық қаңқадан тұрады[cite: 1], бұл оған ерекше беріктік береді.</p>
+            <p>Алмаз — көміртектің табиғи аллотропиялық түрленулерінің бірі. Оның ішкі құрылымында жеке оқшауланған молекулалар кездеспейді. Ол тұтас, үш өлшемді кеңістіктік атомдық қаңқадан тұрады, бұл оған ерекше беріктік береді.</p>
             
             <h3>Құрылымдық және физикалық сипаттамалары:</h3>
             <ul>
@@ -211,7 +211,7 @@
 
         <div id="info-graphite" class="info-box hidden">
             <h2>Графит құрылымы және sp² гибридизациясы</h2>
-            <p>Графит — көміртектің термодинамикалық тұрақты аллотропиялық түрі[cite: 2]. Алмаздан айырмашылығы, оның құрылымы қабатты болып келеді, мұнда атомдар гексагональды (алтыбұрышты) жазық қабаттарды түзеді[cite: 2].</p>
+            <p>Графит — көміртектің термодинамикалық тұрақты аллотропиялық түрі. Алмаздан айырмашылығы, оның құрылымы қабатты болып келеді, мұнда атомдар гексагональды (алтыбұрышты) жазық қабаттарды түзеді.</p>
             
             <h3>Құрылымдық және физикалық сипаттамалары:</h3>
             <ul>
@@ -237,7 +237,7 @@
             scene.background = new THREE.Color(0x000000);
 
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 2, 11);
+            camera.position.set(0, 0, 14);
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
@@ -266,7 +266,7 @@
         }
 
         function createAtom(x, y, z) {
-            const geometry = new THREE.SphereGeometry(0.35, 32, 32);
+            const geometry = new THREE.SphereGeometry(0.3, 32, 32);
             const material = new THREE.MeshStandardMaterial({ 
                 color: 0x1a1a1a, 
                 roughness: 0.3,
@@ -279,7 +279,7 @@
 
         function createBond(v1, v2) {
             const distance = v1.distanceTo(v2);
-            const geometry = new THREE.CylinderGeometry(0.08, 0.08, distance, 16);
+            const geometry = new THREE.CylinderGeometry(0.07, 0.07, distance, 16);
             const material = new THREE.MeshStandardMaterial({ 
                 color: 0xe5e7eb, 
                 roughness: 0.3 
@@ -292,21 +292,27 @@
             return cylinder;
         }
 
-        // --- Модель Алмаза по координатам из Blender ---
+        // --- Модель Алмаза по новым точным координатам[cite: 15] ---
         function createDiamondModel() {
             if (currentGroup) scene.remove(currentGroup);
             currentGroup = new THREE.Group();
 
             const rawCoords = [
-                [0, 2.2, 0], [0, 1.1, 1.2], [1.0, 1.1, -0.6], [-1.0, 1.1, -0.6],
-                [0, 0, 0], [1.5, 0, 1.5], [-1.5, 0, 1.5], [0, 0, -2.1],
-                [0, -1.1, 1.2], [1.0, -1.1, -0.6], [-1.0, -1.1, -0.6], [0, -2.2, 0],
-                [2.2, -1.8, 2.2], [-2.2, -1.8, 2.2], [0, -1.8, -2.8],
-                // Дополнительные узлы сетки алмаза для плотности
-                [1.5, 2.2, -1.5], [-1.5, 2.2, -1.5], [2.2, 1.8, 2.2]
+                [3, -1.5, -1.5], [0, -1.5, -1.5], [0.75, -0.75, -0.75], [1.5, 0, -1.5],
+                [2.25, 0.75, -0.75], [3, 1.5, -1.5], [1.5, -1.5, 0], [2.25, -0.75, 0.75],
+                [3, 0, 0], [3, -1.5, 1.5], [-3, -1.5, -1.5], [-2.25, -0.75, -0.75],
+                [-1.5, 0, -1.5], [-0.75, 0.75, -0.75], [0, 1.5, -1.5], [-1.5, -1.5, 0],
+                [-0.75, -0.75, 0.75], [0, 0, 0], [0.75, 0.75, 0.75], [1.5, 1.5, 0],
+                [0, -1.5, 1.5], [1.5, 0, 1.5], [3, 1.5, 1.5], [-3, 1.5, -1.5],
+                [-3, 0, 0], [-2.25, 0.75, 0.75], [-1.5, 1.5, 0], [-3, -1.5, 1.5],
+                [-1.5, 0, 1.5], [0, 1.5, 1.5], [-3, 1.5, 1.5]
             ];
 
-            const vectors = rawCoords.map(c => new THREE.Vector3(...c));
+            let cx = 0, cy = 0, cz = 0;
+            rawCoords.forEach(c => { cx += c[0]; cy += c[1]; cz += c[2]; });
+            cx /= rawCoords.length; cy /= rawCoords.length; cz /= rawCoords.length;
+
+            const vectors = rawCoords.map(c => new THREE.Vector3(c[0] - cx, c[1] - cy, c[2] - cz));
             const nodes = [];
 
             vectors.forEach(v => {
@@ -319,7 +325,8 @@
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
                     const dist = nodes[i].distanceTo(nodes[j]);
-                    if (dist > 1.2 && dist < 2.0) {
+                    // У алмаза длина связи C-C примерно 1.54 Å (в этих масштабах около 0.8 - 1.4)
+                    if (dist > 0.7 && dist < 1.45) {
                         currentGroup.add(createBond(nodes[i], nodes[j]));
                     }
                 }
@@ -329,7 +336,7 @@
             scene.add(currentGroup);
         }
 
-        // --- Модель Графита по точным координатам (.xyz) ---
+        // --- Модель Графита (неизменная, по старым координатам) ---
         function createGraphiteModel() {
             if (currentGroup) scene.remove(currentGroup);
             currentGroup = new THREE.Group();
